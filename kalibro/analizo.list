@@ -1,0 +1,2 @@
+deb http://analizo.org/download/ ./
+deb-src http://analizo.org/download/ ./

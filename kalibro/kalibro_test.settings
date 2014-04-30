@@ -1,0 +1,10 @@
+serviceSide: SERVER
+clientSettings:
+  serviceAddress: "http://localhost:8080/KalibroService/"
+serverSettings:
+  loadDirectory: /usr/share/tomcat6/.kalibro/tests/projects
+  databaseSettings:
+    databaseType: POSTGRESQL
+    jdbcUrl: "jdbc:postgresql://localhost:5432/kalibro_test"
+    username: "kalibro"
+    password: "kalibro"
