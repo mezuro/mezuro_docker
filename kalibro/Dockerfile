@@ -13,7 +13,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
 
 ADD analizo.list /etc/apt/sources.list.d/analizo.list
 ADD analizo_preferences /etc/apt/preferences.d/analizo
-RUN wget -O - http://analizo.org/download/signing-key.asc | sudo apt-key add -
+RUN wget -O - http://analizo.org/download/signing-key.asc | apt-key add -
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update
 
