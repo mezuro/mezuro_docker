@@ -29,14 +29,15 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
  --no-install-recommends --no-install-suggests \
  analizo
 
-RUN mkdir -p /usr/share/tomcat6/.kalibro/{projects,logs} \
+RUN mkdir -p /usr/share/tomcat6/.kalibro/projects \ 
+ /usr/share/tomcat6/.kalibro/logs \
  && chown -R :tomcat6 /usr/share/tomcat6/.kalibro \
  && chmod 'g+s,a+r,ug+w,o-w' -R /usr/share/tomcat6/.kalibro \
  && chown :tomcat6 /var/lib/tomcat6/webapps \
  && chmod 664 -R /var/lib/tomcat6/webapps \
  && chmod +x /var/lib/tomcat6/webapps
 
-RUN wget https://downloads.sourceforge.net/project/kalibrometrics/KalibroService.tar.gz -O - | \
+RUN wget --progress=dot https://downloads.sourceforge.net/project/kalibrometrics/KalibroService.tar.gz -O - | \
  tar -xz -C "/var/lib/tomcat6/webapps" 
 
 ADD kalibro.settings /usr/share/tomcat6/.kalibro/kalibro.settings
