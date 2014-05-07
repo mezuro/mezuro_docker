@@ -37,8 +37,9 @@ RUN mkdir -p /usr/share/tomcat6/.kalibro/projects \
  && chmod 664 -R /var/lib/tomcat6/webapps \
  && chmod +x /var/lib/tomcat6/webapps
 
-RUN wget --progress=dot https://downloads.sourceforge.net/project/kalibrometrics/KalibroService.tar.gz -O - | \
- tar -xz -C "/var/lib/tomcat6/webapps" 
+RUN cd /root/ && wget -q https://downloads.sourceforge.net/project/kalibrometrics/KalibroService.tar.gz
+RUN tar xzf /root/KalibroService.tar.gz -C "/var/lib/tomcat6/webapps" \
+ --strip-components 1 "KalibroService/KalibroService.war"
 
 ADD kalibro.settings /usr/share/tomcat6/.kalibro/kalibro.settings
 ADD kalibro_test.settings /usr/share/tomcat6/.kalibro/kalibro_test.settings
