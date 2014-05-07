@@ -1,18 +1,26 @@
-FROM ubuntu:12.04
+FROM ubuntu:14.04
 
-ENV LANG C.UTF-8
+MAINTAINER danielkza
+ENV LANG en_US.UTF-8
 
-RUN sed 's#archive\.ubuntu\.com/ubuntu#sft.if.usp.br/ubuntu#g' -i /etc/apt/sources.list
+RUN locale-gen en_US.UTF-8
+
+RUN sed -i /etc/apt/sources.list \
+ -e 's#archive\.ubuntu\.com/ubuntu#sft.if.usp.br/ubuntu#g' \
+ -e 's/main$/main contrib/'
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+ apt-utils build-essential locales ca-certificates wget unzip \
+ git-core postgresql
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
  --no-install-recommends --no-install-suggests \
- locales ca-certificates wget \
- git-core postgresql libpostgresql-jdbc-java tomcat6
+ libpostgresql-jdbc-java tomcat6
 
 ADD analizo.list /etc/apt/sources.list.d/analizo.list
-ADD analizo_preferences /etc/apt/preferences.d/analizo
+ADD analizo.preferences /etc/apt/preferences.d/analizo
 RUN wget -O - http://analizo.org/download/signing-key.asc | apt-key add -
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update
