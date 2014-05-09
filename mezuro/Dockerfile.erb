@@ -1,0 +1,9 @@
+FROM <%= c['docker.repository'] %>/base
+
+MAINTAINER <%= c['docker.maintainer'] %>
+
+RUN git clone https://github.com/mezuro/mezuro.git \
+ <%= c['ruby.app_path'] %>
+
+<%= import['../base/Dockerfile-ruby.erb'] %>
+<%= import['../base/Dockerfile-ports.erb'] %>

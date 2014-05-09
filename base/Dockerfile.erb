@@ -2,8 +2,6 @@ FROM ubuntu:<%= c['ubuntu.version'] %>
 
 MAINTAINER <%= c['docker.maintainer'] %>
 
-CMD /sbin/init
-
 ENV LANG en_US.UTF-8
 RUN locale-gen en_US.UTF-8
 

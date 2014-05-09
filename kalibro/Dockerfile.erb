@@ -2,10 +2,8 @@ FROM <%= c['docker.repository'] %>/base
 
 MAINTAINER <%= c['docker.maintainer'] %>
 
+<%= import["Dockerfile-kalibro.erb"] %>
 <%= import["Dockerfile-gatekeeper.erb"] %>
- 
-<% if c['ssh.expose'] %>
-EXPOSE 22:<%= c['ssh.dest_port'] %>
-<% end %>
+<%= import["../base/Dockerfile-ports.erb"] %>
 
 CMD /bin/init
