@@ -1,0 +1,14 @@
+<%= Apt::install('curl', recommends: false, suggests: false) %>
+
+ADD gemrc /root/.gemrc
+
+RUN git clone https://github.com/mezuro/mezuro.git /root/mezuro
+
+RUN curl -L https://get.rvm.io | bash -s stable
+RUN /bin/bash -l -c "rvm requirements"
+RUN bash -l -c "rvm install $(cat /root/mezuro/.ruby-version)"
+RUN bash -l -c "gem install bundler"
+
+RUN git clone https://github.com/mezuro/kalibro_gatekeeper.git /root/kalibro_gatekeeper
+
+RUN bash -l -c "cd /root/kalibro_gatekeeper && bundle install"
