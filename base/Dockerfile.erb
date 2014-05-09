@@ -2,12 +2,17 @@ FROM ubuntu:<%= c['ubuntu.version'] %>
 
 MAINTAINER <%= c['docker.maintainer'] %>
 
+CMD /sbin/init
+
 ENV LANG en_US.UTF-8
 RUN locale-gen en_US.UTF-8
 
 RUN sed -i /etc/apt/sources.list \
- -e 's#archive\.ubuntu\.com/ubuntu#''<%= c['ubuntu.mirror'] %>'
+ -e 's#http://archive\.ubuntu\.com/ubuntu#''<%= c['ubuntu.mirror'] %>''#'
 
 <%= Apt::update %>
 <%= Apt::install('apt-utils ca-certificates wget unzip git-core',
                  recommends: false, suggests: false) %>
+
+<%= Apt::install('openssh-server', recommends: false, suggests: false) %>
+<%= Apt::reconfigure('openssh-server') %>

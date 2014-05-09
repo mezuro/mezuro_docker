@@ -1,7 +1,0 @@
-<%= Apt::install('openssh-server', suggests: false) %>
-
-<%= Apt::reconfigure('openssh-server') %>
-
-<% if c['ssh.expose'] %>
-EXPOSE 22:<%= c['ssh.dest_port'] %>
-<% end %>
