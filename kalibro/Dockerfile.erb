@@ -1,33 +1,19 @@
-FROM ubuntu:14.04
+FROM <%= c['docker.repository'] %>/base
 
-MAINTAINER danielkza
-ENV LANG en_US.UTF-8
+MAINTAINER <%= c['docker.maintainer'] %>
 
-RUN locale-gen en_US.UTF-8
+<%= Apt::install('postgresql') %>
 
-RUN sed -i /etc/apt/sources.list \
- -e 's#archive\.ubuntu\.com/ubuntu#sft.if.usp.br/ubuntu#g' \
- -e 's/main$/main contrib/'
-
-RUN DEBIAN_FRONTEND=noninteractive apt-get update
-
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
- apt-utils build-essential locales ca-certificates wget unzip \
- git-core postgresql
-
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
- --no-install-recommends --no-install-suggests \
- libpostgresql-jdbc-java tomcat6
+<%= Apt::install('libpostgresql-jdbc-java tomcat6',
+                 recommends: false, suggests: false) %> 
 
 ADD analizo.list /etc/apt/sources.list.d/analizo.list
 ADD analizo.preferences /etc/apt/preferences.d/analizo
 RUN wget -O - http://analizo.org/download/signing-key.asc | apt-key add -
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update
+<%= Apt::update %>
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
- --no-install-recommends --no-install-suggests \
- analizo
+<%= Apt::install('analizo', recommends: false, suggests: false) %>
 
 RUN mkdir -p /usr/share/tomcat6/.kalibro/projects \ 
  /usr/share/tomcat6/.kalibro/logs \

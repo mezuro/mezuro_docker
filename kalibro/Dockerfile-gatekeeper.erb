@@ -1,0 +1,10 @@
+FROM ubuntu:14.04
+
+VOLUME ["/home/mezuro/kalibro_gatekeeper"]
+
+RUN useradd kalibro_gatekeeper -d /home/mezuro/kalibro_gatekeeper
+
+RUN su kalibro_gatekeeper -c 'curl -L https://get.rvm.io | bash -s stable'
+RUN su kalibro_gatekeeper -l -c "rvm requirements"
+RUN su kalibro_gatekeeper -l -c "rvm install <%= c['kalibro_gatekeeper.ruby_version'] %>"
+RUN su kalibro_gatekeeper -l -c "gem install bundler --no-ri --no-rdoc"

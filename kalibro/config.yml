@@ -1,0 +1,15 @@
+kalibro_gatekeeper:
+    path: "../../kalibro_gatekeeper"
+    expose: yes
+    dest_port: 6001
+    ruby_version: 2.1.0
+kalibro:
+    expose: yes
+    dest_port: 6002
+ssh:
+    install: yes
+    expose: yes
+    dest_port: 6003
+psql:
+    expose: no
+    dest_port: 6004

@@ -1,0 +1,13 @@
+FROM ubuntu:<%= c['ubuntu.version'] %>
+
+MAINTAINER <%= c['docker.maintainer'] %>
+
+ENV LANG en_US.UTF-8
+RUN locale-gen en_US.UTF-8
+
+RUN sed -i /etc/apt/sources.list \
+ -e 's#archive\.ubuntu\.com/ubuntu#''<%= c['ubuntu.mirror'] %>'
+
+<%= Apt::update %>
+<%= Apt::install('apt-utils ca-certificates wget unzip git-core',
+                 recommends: false, suggests: false) %>
