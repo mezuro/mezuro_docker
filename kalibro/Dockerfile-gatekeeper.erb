@@ -1,9 +1,17 @@
-RUN useradd kalibro_gatekeeper -d /home/mezuro/kalibro_gatekeeper
+<%= Apt::install('curl', recommends: false, suggests: false) %>
 
+RUN mkdir /home/mezuro
+RUN useradd kalibro_gatekeeper -d /home/mezuro/kalibro_gatekeeper --create-home
+
+ADD gemrc /root/.gemrc
 ADD gemrc /home/mezuro/kalibro_gatekeeper/.gemrc
 
-RUN su kalibro_gatekeeper -c 'curl -L https://get.rvm.io | bash -s stable'
-RUN su kalibro_gatekeeper -l -c "rvm requirements"
+RUN curl -L https://get.rvm.io | bash -s stable
+RUN /bin/bash -l -c "rvm requirements"
 RUN su kalibro_gatekeeper -l -c "rvm install <%= c['kalibro_gatekeeper.ruby_version'] %>"
 RUN su kalibro_gatekeeper -l -c "gem install bundler"
-RUN su kalibro_gatekeeper -l -c "bundle install"
+
+RUN su kalibro_gatekeeper -c \
+ "git clone https://github.com/mezuro/kalibro_gatekeeper.git ~/kalibro_gatekeeper"
+
+ UN su kalibro_gatekeeper -l -c "cd ~/kalibro_gatekeeper; bundle install"
