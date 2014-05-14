@@ -1,0 +1,13 @@
+#!/bin/bash
+
+GATEKEEPER_PATH='<%= c['ruby.gatekeeper_app_path'] %>'
+GATEKEEPER_PIDFILE="${GATEKEEPER_PATH}/kalibro_gatekeeper.pid"
+
+set -e
+
+service openssh-server start
+service postgresql start
+service tomcat6 start
+
+cd $GATEKEEPER_PATH && \
+  bundle exec rails s -p 8081
