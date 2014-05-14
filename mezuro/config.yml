@@ -1,5 +1,5 @@
 ruby:
     app_path: /root/mezuro
 ports:
-    - 22:5001
-    - 3000:5002
+    - 22
+    - 3000
