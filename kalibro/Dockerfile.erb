@@ -14,4 +14,4 @@ RUN echo "gem: --no-ri --no-rdoc" > /root/.gemrc
 
 <%= import["../base/Dockerfile-ports.erb"] %>
 
-CMD /bin/init
+ENTRYPOINT /sbin/init

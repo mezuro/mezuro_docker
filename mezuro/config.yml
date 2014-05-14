@@ -3,3 +3,5 @@ ruby:
 ports:
     - 22
     - 3000
+files:
+	- Dockerfile.erb

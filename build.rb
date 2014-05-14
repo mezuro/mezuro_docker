@@ -97,32 +97,51 @@ class Processor
         context.render(File.read(template_file))
     end
 
-    def process_dir(dir, config: Hash.new, skip_dir_config: false)
+    def process_dir(dir, config: Hash.new, skip_dir_config: false,
+                    extra_subdirs: nil)
         if ! skip_dir_config then
             dir_config = config.deep_merge(BuildConfig::load(dir))
         else
             dir_config = config
         end
 
-        Dir.glob(File.join(dir, "Dockerfile.erb")) do |template_file|
-            dest_file = template_file.chomp(".erb")
+        files = (dir_config['files'] or [])
+        dir_config['files'] = nil
+
+        files.each do |template_file|
+            template_file, dest_file = template_file.split(':').collect{ |f|
+                File.join(dir, f)
+            }
+            
+            if dest_file == nil then
+                dest_file = template_file.chomp(".erb")
+            end
 
             puts "Processing: #{template_file} => #{dest_file}"
 
             File.write(dest_file, render(template_file, dir_config))
+        end
+
+        subdirs = (dir_config['subdirs'] or [])
+        dir_config['subdirs'] = nil
+        
+        if extra_subdirs != nil then
+            subdirs += extra_subdirs
+        end
+
+        subdirs.each do |subdir|
+            subdir = File.join(dir, subdir)
+            puts "Entering #{subdir}/"
+
+            process_dir(subdir, config: dir_config)
         end
     end
 
     def process_dir_subdirs(dir, subdirs)
         config = BuildConfig::load(dir)
 
-        process_dir(dir, config: config, skip_dir_config: true)
-
-        subdirs.each do |subdir|
-            puts "Entering #{subdir}/"
-
-            process_dir(File.join(dir, subdir), config: config)
-        end
+        process_dir(dir, config: config, skip_dir_config: true,
+                    extra_subdirs: subdirs)
     end
 
     def self.main(subdirs: nil)

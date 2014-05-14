@@ -7,3 +7,6 @@ ports:
     - 5432
     - 8081
     - 3000
+files:
+    - Dockerfile.erb
+    - start.sh.erb
