@@ -6,5 +6,4 @@ ubuntu:
     mirror: http://sft.if.usp.br/ubuntu
 subdirs:
     - base
-    - kalibro
     - mezuro

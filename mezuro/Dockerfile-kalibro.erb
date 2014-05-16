@@ -1,3 +1,5 @@
+VOLUME ["/var/lib/postgresql"]
+
 <%= Apt::install('postgresql') %>
 
 <%= Apt::install('libpostgresql-jdbc-java tomcat6',

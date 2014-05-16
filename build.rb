@@ -47,6 +47,12 @@ class Apt
     end
 end
 
+class Git
+    def self.import_or_clone(path, repo)
+        "RUN bash -c \"[ -d '#{path}' ] || git clone '#{repo}' '#{path}'\""
+    end
+end
+
 class BuildConfig < Hash
     def self.load(path)
         config_path = File.join(path, "config.yml")
@@ -85,12 +91,17 @@ class Processor
 
         import = lambda { |f|
             path = File.join(File.dirname(template_file), f)
-            context.render(File.read(path))
+            (
+                "##### start: #{path} #####\n" +
+                context.render(File.read(path)) + "\n" +
+                "##### end: #{path} #####\n"
+            )
         }
 
         context = ERBContextWrapper.new({
             :c       => lambda { |key| config.cfg_key(key) },
             :Apt     => Apt,
+            :Git     => Git,
             :import  => import
         })
 

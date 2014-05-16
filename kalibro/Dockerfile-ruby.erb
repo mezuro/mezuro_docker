@@ -1,9 +1,0 @@
-<%= Apt::install('curl', recommends: false, suggests: false) %>
-
-RUN curl -L https://get.rvm.io | bash
-RUN /bin/bash -l -c "rvm requirements"
-RUN bash -l -c "rvm install $(cat '<%= c['ruby.app_path'] %>/.ruby-version')"
-
-RUN echo "gem: --no-ri --no-rdoc" > /root/.gemrc
-RUN bash -l -c "gem install bundler"
-RUN bash -l -c "cd '<%= c['ruby.app_path'] %>' && bundle install"

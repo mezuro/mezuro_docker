@@ -1,7 +1,12 @@
 ruby:
-    app_path: /root/mezuro
+    gatekeeper_app_path: /root/kalibro_gatekeeper
+    mezuro_app_path: /root/mezuro
 ports:
     - 22
+    - 8080
+    - 5432
+    - 8081
     - 3000
 files:
-	- Dockerfile.erb
+    - Dockerfile.erb
+    - start.sh.erb

@@ -3,11 +3,17 @@
 GATEKEEPER_PATH='<%= c['ruby.gatekeeper_app_path'] %>'
 GATEKEEPER_PIDFILE="${GATEKEEPER_PATH}/kalibro_gatekeeper.pid"
 
+MEZURO_PATH='<%= c['ruby.mezuro_app_path'] %>'
+MEZURO_PIDFILE="${MEZURO_PATH}/mezuro.pid"
+
 set -e
 
 service openssh-server start
 service postgresql start
 service tomcat6 start
 
-cd $GATEKEEPER_PATH && \
-  bundle exec rails s -p 8081
+cd "$GATEKEEPER_PATH" && \
+  bundle exec rails s -d -p 8081
+
+cd "$MEZURO_PATH" && \
+  bundle exec rails s -d -p 3000
