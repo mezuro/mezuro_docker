@@ -15,8 +15,3 @@ RUN echo "gem: --no-document" > /root/.gemrc
 <%= import["Dockerfile-mezuro.erb"] %>
 
 <%= import["../base/Dockerfile-ports.erb"] %>
-
-ENTRYPOINT /sbin/init
-
-
-
