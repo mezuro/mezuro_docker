@@ -9,7 +9,7 @@ RUN sed -i /etc/apt/sources.list \
  -e 's#http://archive\.ubuntu\.com/ubuntu#''<%= c['ubuntu.mirror'] %>''#'
 
 <%= Apt::update %>
-<%= Apt::install('apt-utils ca-certificates wget unzip git-core postgresql-server-dev-all',
+<%= Apt::install('apt-utils ca-certificates wget unzip git-core',
                  recommends: false, suggests: false) %>
 
 <%= Apt::install('openssh-server', recommends: false, suggests: false) %>
