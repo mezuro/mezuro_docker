@@ -29,7 +29,7 @@ class Apt
     @@command_prefix='DEBIAN_FRONTEND=noninteractive'
 
     def self.update
-        "RUN #{@@command_prefix} apt-get update"
+        "RUN bash -c 'set -o pipefail; #{@@command_prefix} apt-get update | (! grep -q ^Err)'"
     end
 
     def self.install(packages, options: nil, recommends: true, suggests: true)
