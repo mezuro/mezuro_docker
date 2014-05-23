@@ -3,7 +3,7 @@ docker:
     maintainer: Mezuro Project (http://mezuro.org)
 ubuntu:
     version: 14.04
-    mirror: http://sft.if.usp.br/ubuntu
+    mirror: http://mirror.pnl.gov/ubuntu/ 
 subdirs:
     - base
     - mezuro
