@@ -1,19 +1,21 @@
 #!/bin/bash
 
 GATEKEEPER_PATH='<%= c['ruby.gatekeeper_app_path'] %>'
-GATEKEEPER_PIDFILE="${GATEKEEPER_PATH}/kalibro_gatekeeper.pid"
-
 MEZURO_PATH='<%= c['ruby.mezuro_app_path'] %>'
-MEZURO_PIDFILE="${MEZURO_PATH}/mezuro.pid"
 
 set -e
 
+copy_db_cfg()
+{
+    [ -f config/database.yml ] || cp config/database.yml{.sample,}
+}
+
 cd "$GATEKEEPER_PATH" && \
-  cp config/database.yml.sample config/database.yml
+  copy_db_cfg
 
 cd "$MEZURO_PATH" && \
-  cp config/database.yml.sample config/database.yml && \
-  rake db:create && rake db:migrate
+  copy_db_cfg && \
+  rake db:setup
 
 service postgresql start
 service tomcat6 start
