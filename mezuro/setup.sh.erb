@@ -1,0 +1,33 @@
+#!/bin/bash
+
+GATEKEEPER_PATH='<%= c['ruby.gatekeeper_app_path'] %>'
+MEZURO_PATH='<%= c['ruby.mezuro_app_path'] %>'
+
+set -e
+
+copy_db_cfg()
+{
+  [ -f config/database.yml ] || cp config/database.yml{.sample,}
+}
+
+copy_tests_cfg()
+{
+  [ -f features/support/kalibro_cucumber_helpers.yml ] || cp features/support/kalibro_cucumber_helpers.yml{.sample,}
+}
+
+
+cd "$GATEKEEPER_PATH" && \
+  copy_db_cfg
+
+cd "$MEZURO_PATH" && \
+  copy_db_cfg && \
+  rake db:setup
+
+cd "$MEZURO_PATH" && \
+  copy_tests_cfg
+
+service postgresql start
+service tomcat6 start
+
+cd "$GATEKEEPER_PATH" && \
+  bundle exec rails s -d -p 8081

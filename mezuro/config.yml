@@ -10,3 +10,4 @@ ports:
 files:
     - Dockerfile.erb
     - start.sh.erb
+    - setup.sh.erb
