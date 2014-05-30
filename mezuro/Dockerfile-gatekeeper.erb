@@ -1,6 +1,6 @@
-<%= Git::import_or_clone(c['ruby.gatekeeper_app_path'], 
+<%= Git::import_or_clone(@ruby.gatekeeper_app_path, 
                          'https://github.com/mezuro/kalibro_gatekeeper.git') %>
 
-ADD start.sh <%= c['ruby.gatekeeper_app_path'] %>/start.sh  
-RUN bash -l -c "cd <%= c['ruby.gatekeeper_app_path'] %> && rvm install $(cat '<%= c['ruby.gatekeeper_app_path'] %>/.ruby-version')"
-RUN bash -l -c "cd <%= c['ruby.gatekeeper_app_path'] %> && gem install bundler && bundle install -j4"
+ADD start.sh <%= @ruby.gatekeeper_app_path %>/start.sh  
+RUN bash -l -c "cd <%= @ruby.gatekeeper_app_path %> && rvm install $(cat '<%= @ruby.gatekeeper_app_path %>/.ruby-version')"
+RUN bash -l -c "cd <%= @ruby.gatekeeper_app_path %> && gem install bundler && bundle install -j4"

@@ -1,6 +1,6 @@
-FROM <%= c['docker.repository'] %>/base
+FROM <%= @docker.repository %>/base
 
-MAINTAINER <%= c['docker.maintainer'] %>
+MAINTAINER <%= @docker.maintainer %>
 
 <%= Apt::install('curl libpq-dev', recommends: false, suggests: false) %>
 
