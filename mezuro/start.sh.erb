@@ -15,7 +15,7 @@ cd "$GATEKEEPER_PATH" && \
 
 cd "$MEZURO_PATH" && \
   copy_db_cfg && \
-  rake db:setup
+  bundle exec rake db:setup
 
 service postgresql start
 service tomcat6 start

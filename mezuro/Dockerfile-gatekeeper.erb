@@ -2,5 +2,5 @@
                          'https://github.com/mezuro/kalibro_gatekeeper.git') %>
 
 ADD start.sh <%= c['ruby.gatekeeper_app_path'] %>/start.sh  
-RUN bash -l -c "cd <%= c['ruby.gatekeeper_app_path'] %> && rvm install $(cat '<%= c['ruby.gatekeeper_app_path'] %>/.ruby-version')"
+RUN bash -l -c "cd <%= c['ruby.gatekeeper_app_path'] %> && rvm install ruby-2.1.2"
 RUN bash -l -c "cd <%= c['ruby.gatekeeper_app_path'] %> && gem install bundler && bundle install -j4"

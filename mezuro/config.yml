@@ -1,6 +1,7 @@
 ruby:
     gatekeeper_app_path: /root/kalibro_gatekeeper
     mezuro_app_path: /root/mezuro
+    phantom_js_path: /usr/local/share
 ports:
     - 22
     - 8080

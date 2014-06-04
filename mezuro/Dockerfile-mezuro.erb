@@ -1,7 +1,13 @@
 <%= Git::import_or_clone(c['ruby.mezuro_app_path'],
                          'https://github.com/mezuro/mezuro.git') %>
 
-RUN bash -l -c "cd <%= c['ruby.mezuro_app_path'] %> && rvm install $(cat '<%= c['ruby.mezuro_app_path'] %>/.ruby-version')"
+RUN bash -l -c "cd <%= c['ruby.mezuro_app_path'] %> && rvm install ruby-2.1.2"
 RUN bash -l -c "cd <%= c['ruby.mezuro_app_path'] %> && gem install bundler && bundle install -j4"
+
+RUN bash -l -c "cd <%= c['ruby.phantom_js_path'] %> && wget http://phantomjs.googlecode.com/files/phantomjs-1.9.2-linux-x86_64.tar.bz2"
+RUN bash -l -c "tar xjf <%= c['ruby.phantom_js_path'] %>/phantomjs-1.9.2-linux-x86_64.tar.bz2"
+RUN bash -l -c "ln -s <%= c['ruby.phantom_js_path'] %>/phantomjs-1.9.2-linux-x86_64/bin/phantomjs <%= c['ruby.phantom_js_path'] %>/phantomjs"
+RUN bash -l -c "ln -s <%= c['ruby.phantom_js_path'] %>/phantomjs-1.9.2-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs"
+RUN bash -l -c "ln -s <%= c['ruby.phantom_js_path'] %>/phantomjs-1.9.2-linux-x86_64/bin/phantomjs /usr/bin/phantomjs"
 
 ADD setup.sh <%= c['ruby.mezuro_app_path'] %>/setup.sh

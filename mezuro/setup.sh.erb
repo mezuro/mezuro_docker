@@ -21,7 +21,7 @@ cd "$GATEKEEPER_PATH" && \
 
 cd "$MEZURO_PATH" && \
   copy_db_cfg && \
-  rake db:setup
+  bundle exec rake db:setup
 
 cd "$MEZURO_PATH" && \
   copy_tests_cfg
