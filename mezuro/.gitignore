@@ -1,0 +1,4 @@
+Dockerfile*
+*_setup.sh
+*_start.sh
+!*.erb
