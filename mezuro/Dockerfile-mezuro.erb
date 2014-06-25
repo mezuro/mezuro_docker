@@ -10,4 +10,5 @@ RUN bash -l -c "ln -s <%= c['ruby.phantom_js_path'] %>/phantomjs-1.9.2-linux-x86
 RUN bash -l -c "ln -s <%= c['ruby.phantom_js_path'] %>/phantomjs-1.9.2-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs"
 RUN bash -l -c "ln -s <%= c['ruby.phantom_js_path'] %>/phantomjs-1.9.2-linux-x86_64/bin/phantomjs /usr/bin/phantomjs"
 
-ADD setup.sh <%= c['ruby.mezuro_app_path'] %>/setup.sh
+ADD mezuro_setup.sh <%= c['ruby.mezuro_app_path'] %>/setup.sh
+ADD mezuro_start.sh <%= c['ruby.mezuro_app_path'] %>/start.sh

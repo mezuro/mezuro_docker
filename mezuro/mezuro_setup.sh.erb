@@ -1,6 +1,7 @@
 #!/bin/bash
 
 GATEKEEPER_PATH='<%= c['ruby.gatekeeper_app_path'] %>'
+GATEKEEPER_SETUP="$GATEKEEPER_PATH/setup.sh"
 MEZURO_PATH='<%= c['ruby.mezuro_app_path'] %>'
 
 set -e
@@ -15,19 +16,9 @@ copy_tests_cfg()
   [ -f features/support/kalibro_cucumber_helpers.yml ] || cp features/support/kalibro_cucumber_helpers.yml{.sample,}
 }
 
-
-cd "$GATEKEEPER_PATH" && \
-  copy_db_cfg
+[ -x "$GATEKEEPER_SETUP"] && "$GATEKEEPER_SETUP"
 
 cd "$MEZURO_PATH" && \
   copy_db_cfg && \
+  copy_tests_cfg && \
   bundle exec rake db:setup
-
-cd "$MEZURO_PATH" && \
-  copy_tests_cfg
-
-service postgresql start
-service tomcat6 start
-
-cd "$GATEKEEPER_PATH" && \
-  bundle exec rails s -d -p 8081

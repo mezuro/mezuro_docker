@@ -1,0 +1,17 @@
+#!/bin/bash
+
+GATEKEEPER_PATH='<%= c['ruby.gatekeeper_app_path'] %>'
+GATEKEEPER_PIDFILE="$GATEKEEPER_PATH/gatekeeper.pid"
+
+set -e
+
+if [ -e "$PIDFILE" ]; then
+	echo "Kalibro Gatekeeper is already running"
+	exit 2
+end
+
+service start postgresql
+service start tomcat6
+
+cd "$GATEKEEPER_PATH" && \
+  bundle exec rails s -d -p 8081 --pid "$PIDFILE"

@@ -10,5 +10,11 @@ ports:
     - 3000
 files:
     - Dockerfile.erb
-    - start.sh.erb
-    - setup.sh.erb
+    - mezuro_start.sh.erb
+    - mezuro_setup.sh.erb
+    - gatekeeper_setup.sh.erb
+    - gatekeeper_start.sh.erb
+features:
+    - kalibro
+    - gatekeeper
+    - mezuro

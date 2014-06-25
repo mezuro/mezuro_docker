@@ -1,0 +1,23 @@
+#!/bin/bash
+
+GATEKEEPER_PATH='<%= c['ruby.gatekeeper_app_path'] %>'
+GATEKEEPER_START="$GATEKEEPER_PATH/start.sh"
+
+MEZURO_PATH='<%= c['ruby.mezuro_app_path'] %>'
+MEZURO_PIDFILE="$MEZURO_PATH/mezuro.pid"
+
+if [ -e "$MEZURO_PIDFILE" ]; then
+	echo "Mezuro is already running"
+	exit 2
+fi
+
+if [ -x "$GATEKEEPER_START" ]; then
+	"$GATEKEEPER_START"
+	if [ $? -ne 0 -a $? -ne 2 ]; then
+		echo "Failed to start Mezuro Gatekeeper"
+		exit 1
+	fi
+end
+
+cd "$MEZURO_PATH" && \
+  bundle exec rails s -d -p 3000 --pid "$MEZURO_PIDFILE"

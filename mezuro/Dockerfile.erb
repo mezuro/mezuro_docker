@@ -2,16 +2,23 @@ FROM <%= c['docker.repository'] %>/base
 
 MAINTAINER <%= c['docker.maintainer'] %>
 
+<%= Apt::update %>
 <%= Apt::install('curl libpq-dev', recommends: false, suggests: false) %>
 
 RUN curl -L https://get.rvm.io | bash
 RUN bash -l -c "rvm requirements"
 RUN echo "gem: --no-document" > /root/.gemrc
 
+<% if c['features'].include?('kalibro') %> 
 <%= import["Dockerfile-kalibro.erb"] %>
+<% end %>
 
+<% if c['features'].include?('gatekeeper') %> 
 <%= import["Dockerfile-gatekeeper.erb"] %>
+<% end %>
 
+<% if c['features'].include?('mezuro') %> 
 <%= import["Dockerfile-mezuro.erb"] %>
+<% end %>
 
 <%= import["../base/Dockerfile-ports.erb"] %>
