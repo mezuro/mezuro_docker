@@ -48,8 +48,14 @@ class Apt
 end
 
 class Git
-    def self.import_or_clone(path, repo)
-        "RUN bash -c \"[ -d '#{path}' ] || git clone '#{repo}' '#{path}'\""
+    def self.import_or_clone(path, repo, revision=nil)
+        result = "RUN bash -c \"[ -d '#{path}' ] || git clone '#{repo}' '#{path}'\""
+        if revision != nil
+            result += "\n"
+            result += "RUN bash -c \"cd '#{path}' && git fetch && git checkout '#{revision}'\""
+        end
+
+        result
     end
 end
 
