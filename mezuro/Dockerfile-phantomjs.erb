@@ -1,4 +1,4 @@
-RUN wget 'http://phantomjs.googlecode.com/files/phantomjs-<%= c['phantomjs.version'] %>-linux-x86_64.tar.bz2' -O /root/phantomjs.tar.bz2'
+RUN wget 'http://phantomjs.googlecode.com/files/phantomjs-<%= c['phantomjs.version'] %>-linux-x86_64.tar.bz2' -O /root/phantomjs.tar.bz2
 
 RUN mkdir -p '<%= c['phantomjs.install_path'] %>'
 RUN tar xjf /root/phantomjs.tar.bz2 -C '<%= c['phantomjs.install_path'] %>'
