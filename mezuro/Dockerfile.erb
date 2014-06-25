@@ -21,4 +21,8 @@ RUN echo "gem: --no-document" > /root/.gemrc
 <%= import["Dockerfile-mezuro.erb"] %>
 <% end %>
 
+<% if c['features'].include?('phantomjs') %> 
+<%= import["Dockerfile-phantomjs.erb"] %>
+<% end %>
+
 <%= import["../base/Dockerfile-ports.erb"] %>
