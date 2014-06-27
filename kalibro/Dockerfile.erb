@@ -21,7 +21,7 @@ RUN wget -q -O - http://analizo.org/download/signing-key.asc | apt-key add -
 RUN mkdir -p /usr/share/tomcat6/.kalibro/projects/ \
  /usr/share/tomcat6/.kalibro/tests/projects/ \
  /usr/share/tomcat6/.kalibro/logs/
-F
+
 <%= docker.copy_tmpl('kalibro.settings.erb', '/usr/share/tomcat6/.kalibro/kalibro.settings') %>
 <%= docker.copy_tmpl('kalibro_test.settings.erb', '/usr/share/tomcat6/.kalibro/kalibro_test.settings') %>
 
