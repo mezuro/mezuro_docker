@@ -82,7 +82,6 @@ class DockerUtil < CommandBase
         fname = fname.chomp('.erb')
         "COPY #{fname} #{dest}"
     end
-
 end
 
 class MiscUtil < CommandBase
@@ -169,11 +168,17 @@ class Processor
     end
 
     def write_template(fname, config)
+        path = File.join(@base_dir, fname)
+
         result_fname = fname.chomp('.erb')
+        result_path = File.join(@build_dir, result_fname)
+
         puts "* process #{fname} => #{result_fname}"
 
-        File.write(File.join(@build_dir, result_fname),
-                   render_template(fname, config))
+        FileUtils.touch(result_path)
+        FileUtils.chmod(File.stat(path).mode, result_path)
+
+        File.write(result_path, render_template(fname, config))
     end
 
     def ignored?(f)
@@ -210,7 +215,7 @@ class Processor
 
                 puts "* cp #{fname}"
                 FileUtils.cp_r(File.join(@base_dir, fname),
-                               File.join(@build_dir, fname))
+                               File.join(@build_dir, fname), preserve: true)
             else
                 write_template(fname, dir_config)
             end
