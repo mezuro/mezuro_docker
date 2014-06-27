@@ -176,7 +176,10 @@ class Processor
         puts "* process #{fname} => #{result_fname}"
 
         FileUtils.touch(result_path)
-        FileUtils.chmod(File.stat(path).mode, result_path)
+
+        stat = File.stat(path)
+        File.chmod(stat.mode, result_path)
+        File.utime(stat.atime, stat.mtime, result_path)
 
         File.write(result_path, render_template(fname, config))
     end
@@ -298,10 +301,12 @@ class Processor
     end
 end
 
-task = ARGV[0]
+if __FILE__ == $0
+    task = ARGV[0]
 
-if task == 'generate'
-    Processor.generate(*ARGV[1..-1])
-elsif task == 'build'
-    Processor.build(*ARGV[1..-1])
+    if task == 'generate'
+        Processor.generate(*ARGV[1..-1])
+    elsif task == 'build'
+        Processor.build(*ARGV[1..-1])
+    end
 end

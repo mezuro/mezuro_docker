@@ -19,8 +19,8 @@ RUN wget -O - http://analizo.org/download/signing-key.asc | apt-key add -
                  recommends: false, suggests: false) %>
 
 RUN mkdir -p /usr/share/tomcat6/.kalibro/projects/ \
-             /usr/share/tomcat6/.kalibro/tests/projects/ \
-             /usr/share/tomcat6/.kalibro/logs/
+ /usr/share/tomcat6/.kalibro/tests/projects/ \
+ /usr/share/tomcat6/.kalibro/logs/
 
 <%= docker.copy_tmpl('kalibro.settings.erb', '/usr/share/tomcat6/.kalibro/kalibro.settings') %>
 <%= docker.copy_tmpl('kalibro_test.settings.erb', '/usr/share/tomcat6/.kalibro/kalibro_test.settings') %>
@@ -35,8 +35,7 @@ RUN service postgresql start \
  && sleep 2 \
  && su postgres -c /var/tmp/KalibroService/create_db.sh
 
-COPY '<%= c['kalibro.download_path'] %>' /var/tmp/KalibroService.tar.gz
-RUN tar xf /var/tmp/KalibroService.tar.gz -C /var/tmp/ KalibroService/
+ADD <%= c['kalibro.download_path'] %> /var/tmp/
 
 RUN mkdir -p /var/lib/tomcat6/webapps/KalibroService
 RUN unzip /var/tmp/KalibroService/KalibroService.war \
