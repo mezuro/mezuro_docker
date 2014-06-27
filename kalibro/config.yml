@@ -1,0 +1,8 @@
+kalibro:
+    download_path: https://downloads.sourceforge.net/project/kalibrometrics/KalibroService.tar.gz
+    db:
+        username: kalibro
+        password: kalibro
+ports:
+    - 8080
+    - 5432

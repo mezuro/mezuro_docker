@@ -1,13 +1,13 @@
-ruby:
-    gatekeeper_app_path: /root/kalibro_gatekeeper
-    mezuro_app_path: /root/mezuro
+gatekeeper:
+    install_path: /home/mezuro/kalibro_gatekeeper
+mezuro:
+    install: true
+    install_path: /home/mezuro/mezuro
 phantomjs:
+    install: true
+    download_path: https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-x86_64.tar.bz2
     install_path: /opt/phantomjs
-    version: 1.9.7
 ports:
-    - 22
-    - 8080
-    - 5432
     - 8081
     - 3000
 files:
@@ -16,9 +16,5 @@ files:
     - mezuro_setup.sh.erb
     - gatekeeper_setup.sh.erb
     - gatekeeper_start.sh.erb
-features:
-    - kalibro
-    - gatekeeper
-    - mezuro
-    - phantomjs
+
 

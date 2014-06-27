@@ -1,0 +1,50 @@
+FROM <%= c['docker.repository'] %>/base
+
+MAINTAINER <%= c['docker.maintainer'] %>
+
+# VOLUME ["/var/lib/postgresql"]
+
+COPY analizo.list /etc/apt/sources.list.d/analizo.list
+COPY analizo.preferences /etc/apt/preferences.d/analizo
+RUN wget -O - http://analizo.org/download/signing-key.asc | apt-key add -
+
+<%= apt.update %>
+
+<%= apt.install('postgresql') %>
+
+<%= apt.install('libpostgresql-jdbc-java tomcat6',
+                 recommends: false, suggests: false) %> 
+
+<%= apt.install('analizo',
+                 recommends: false, suggests: false) %>
+
+RUN mkdir -p /usr/share/tomcat6/.kalibro/projects/ \
+             /usr/share/tomcat6/.kalibro/tests/projects/ \
+             /usr/share/tomcat6/.kalibro/logs/
+
+<%= docker.copy_tmpl('kalibro.settings.erb', '/usr/share/tomcat6/.kalibro/kalibro.settings') %>
+<%= docker.copy_tmpl('kalibro_test.settings.erb', '/usr/share/tomcat6/.kalibro/kalibro_test.settings') %>
+
+RUN chown -R :tomcat6 /usr/share/tomcat6/.kalibro \
+ && chmod -R 'a=rX,ug+w' /usr/share/tomcat6/.kalibro \
+
+RUN mkdir -p /var/tmp/KalibroService
+
+<%= docker.copy_tmpl('create_db.sh.erb', '/var/tmp/KalibroService/create_db.sh') %>
+RUN service postgresql start \
+ && sleep 2 \
+ && su postgres -c /var/tmp/KalibroService/create_db.sh
+
+COPY '<%= c['kalibro.download_path'] %>' /var/tmp/KalibroService.tar.gz
+RUN tar xf /var/tmp/KalibroService.tar.gz -C /var/tmp/ KalibroService/
+
+RUN mkdir -p /var/lib/tomcat6/webapps/KalibroService
+RUN unzip /var/tmp/KalibroService/KalibroService.war \
+     -d /var/lib/tomcat6/webapps/KalibroService
+RUN chown tomcat6:tomcat6 /var/lib/tomcat6/webapps/KalibroService \
+ && chmod 'a=rX,ug+w' /var/lib/tomcat6/webapps/KalibroService
+
+COPY import_config.sh /var/tmp/KalibroService/
+RUN su tomcat6 -c '/var/tmp/KalibroService/import_config.sh /var/tmp/KalibroService/configs/Configuration.yml'
+
+<%= docker.ports %>

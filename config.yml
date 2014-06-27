@@ -3,7 +3,14 @@ docker:
     maintainer: Mezuro Project (http://mezuro.org)
 ubuntu:
     version: 14.04
-    mirror: http://ubuntu.c3sl.ufpr.br/ubuntu/ 
+    mirror: http://ubuntu.c3sl.ufpr.br/ubuntu/
+apt:
+    use_proxy: false
+    proxy_url: http://apt-cacher-ng:3142
+build:
+    options: --rm=true --force-rm=true
 subdirs:
     - base
+    - kalibro
     - mezuro
+

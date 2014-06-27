@@ -25,14 +25,24 @@ end
 
 ## 
 
-class Apt
+class CommandBase
+    attr_reader :processor, :config, :current_template
+
+    def initialize(processor, config, current_template=nil)
+        @processor = processor
+        @config = config
+        @current_template = current_template
+    end
+end
+
+class Apt < CommandBase
     @@command_prefix='DEBIAN_FRONTEND=noninteractive'
 
-    def self.update
-        "RUN bash -c 'set -o pipefail; #{@@command_prefix} apt-get update | (! grep -q ^Err)'"
+    def update
+        "RUN bash -c 'set -o pipefail; #{@@command_prefix} apt-get update | tee /dev/stdout | (! grep -q ^Err)'"
     end
 
-    def self.install(packages, options: nil, recommends: true, suggests: true)
+    def install(packages, options: nil, recommends: true, suggests: true)
         (
             ["RUN", @@command_prefix, 'apt-get install -y'] +
             (suggests ? [] : ['--no-install-suggests']) +
@@ -42,13 +52,13 @@ class Apt
         ).join(" ") 
     end
 
-    def self.reconfigure(package)
+    def reconfigure(package)
         "RUN #{@@command_prefix} dpkg-reconfigure #{package}"
     end
 end
 
-class Git
-    def self.import_or_clone(path, repo, revision=nil)
+class Git < CommandBase
+    def import_or_clone(path, repo, revision=nil)
         result = "RUN bash -c \"[ -d '#{path}' ] || git clone '#{repo}' '#{path}'\""
         if revision != nil
             result += "\n"
@@ -56,6 +66,28 @@ class Git
         end
 
         result
+    end
+end
+
+class DockerUtil < CommandBase
+    def ports
+        (config.cfg_key('ports') || []).map { |port|
+            "EXPOSE #{port}"
+        }.join("\n")
+    end
+
+    def copy_tmpl(fname, dest)
+        processor.write_template(File.join(File.dirname(current_template), fname),
+                                 config)
+        fname = fname.chomp('.erb')
+        "COPY #{fname} #{dest}"
+    end
+
+end
+
+class MiscUtil < CommandBase
+    def yaml_string(s)
+        s.to_yaml.sub(/^---\s+/, '').sub(/\.{3}\s+$/, '').chomp
     end
 end
 
@@ -91,12 +123,32 @@ end
 
 class Processor
     @@default_subdirs = ['base', 'kalibro']
+    @@ignore_patterns = ['*.erb', 'config.yml'] 
+    @@process_patterns = ['Dockerfile.erb']
 
-    def render(template_file, config)
+    attr_reader :base_dir, :build_dir, :config
+
+    def initialize(base_dir, build_dir)
+        @base_dir = base_dir
+        @build_dir = build_dir
+
+        @config = BuildConfig::load(@base_dir)
+    end
+
+    def subdirs
+        @config['subdirs'] || []
+    end
+
+    def render_template(fname, config)
+        config = config.clone
+
         context = nil
 
         import = lambda { |f|
-            path = File.join(File.dirname(template_file), f)
+            import_fname = File.join(File.dirname(fname), f)
+            puts "** import #{import_fname}"
+ 
+            path = File.join(@base_dir, import_fname)
             (
                 "##### start: #{path} #####\n" +
                 context.render(File.read(path)) + "\n" +
@@ -105,65 +157,146 @@ class Processor
         }
 
         context = ERBContextWrapper.new({
-            :c       => lambda { |key| config.cfg_key(key) },
-            :Apt     => Apt,
-            :Git     => Git,
-            :import  => import
+            :c        => lambda { |key| config.cfg_key(key) },
+            :apt      => Apt.new(self, config, fname),
+            :git      => Git.new(self, config, fname),
+            :misc     => MiscUtil.new(self, config, fname),
+            :docker   => DockerUtil.new(self, config, fname),
+            :import   => import
         })
 
-        context.render(File.read(template_file))
+        context.render(File.read(File.join(@base_dir, fname)))
     end
 
-    def process_dir(dir, config: Hash.new, skip_dir_config: false,
-                    extra_subdirs: nil)
-        if ! skip_dir_config then
-            dir_config = config.deep_merge(BuildConfig::load(dir))
-        else
-            dir_config = config
+    def write_template(fname, config)
+        result_fname = fname.chomp('.erb')
+        puts "* process #{fname} => #{result_fname}"
+
+        File.write(File.join(@build_dir, result_fname),
+                   render_template(fname, config))
+    end
+
+    def ignored?(f)
+        @@ignore_patterns.any? do |pattern|
+            File.fnmatch?(pattern, f)
         end
+    end
 
-        files = (dir_config['files'] or [])
-        dir_config['files'] = nil
+    def should_process?(f)
+        @@process_patterns.any? do |pattern|
+            File.fnmatch?(pattern, f)
+        end
+    end
 
-        files.each do |template_file|
-            template_file, dest_file = template_file.split(':').collect{ |f|
-                File.join(dir, f)
-            }
-            
-            if dest_file == nil then
-                dest_file = template_file.chomp(".erb")
+    def do_process_dir(dir, config=nil)
+        config ||= @config
+
+        input_dir = File.join(@base_dir, dir)
+        stage_dir = File.join(@build_dir, dir)
+        puts "Staging #{input_dir} into #{stage_dir}"
+
+        FileUtils.rm_r(stage_dir, force: true, secure: true)
+        FileUtils.mkdir_p(stage_dir)
+
+        dir_config = config.deep_merge(BuildConfig::load(input_dir))
+
+        Dir.foreach(input_dir) do |f|
+            next if f == '.' or f == '..'
+
+            fname = File.join(dir, f)
+
+            if ! should_process?(f)
+                next if ignored?(f)
+
+                puts "* cp #{fname}"
+                FileUtils.cp_r(File.join(@base_dir, fname),
+                               File.join(@build_dir, fname))
+            else
+                write_template(fname, dir_config)
             end
-
-            puts "Processing: #{template_file} => #{dest_file}"
-
-            File.write(dest_file, render(template_file, dir_config))
-        end
-
-        subdirs = (dir_config['subdirs'] or [])
-        dir_config['subdirs'] = nil
-        
-        if extra_subdirs != nil then
-            subdirs += extra_subdirs
-        end
-
-        subdirs.each do |subdir|
-            subdir = File.join(dir, subdir)
-            puts "Entering #{subdir}/"
-
-            process_dir(subdir, config: dir_config)
         end
     end
 
-    def process_dir_subdirs(dir, subdirs)
-        config = BuildConfig::load(dir)
+    def self.docker_command
+        username = Etc.getlogin
+        has_docker_group = Etc.getgrnam('docker').mem.include?(username)
 
-        process_dir(dir, config: config, skip_dir_config: true,
-                    extra_subdirs: subdirs)
+        if has_docker_group
+            'docker'
+        else
+            'sudo docker'
+        end
     end
 
-    def self.main(subdirs: nil)
-        self.new.process_dir_subdirs(".", (subdirs or @@default_subdirs))
+    def do_build_dir(dir)
+        build_opts = config.cfg_key('build.options')
+
+        dir_path = File.join(@build_dir, dir)
+        if not File.file?(File.join(dir_path, 'Dockerfile'))
+            puts "Error: No Dockerfile in '#{dir_path}'"
+            return false
+        end
+
+        tag = config.cfg_key('docker.repository') + '/' + dir
+        command = "#{self.class.docker_command} build --tag='#{tag}' #{build_opts} '#{dir_path}'"
+
+        puts command
+        system(command)
+    end
+
+    def check_subdirs(base_dir)
+        subdirs = @config['subdirs'] || []
+
+        if subdirs.empty?
+            puts "Error: No subdirs in config.yml, nothing to do."
+            return false
+        end
+
+        subdirs.each do |dir|
+            subdir_path = File.join(base_dir, dir)
+            if ! File.directory?(subdir_path)
+                puts "Error: '#{subdir_path}' is not a directory or is not accesible."
+                return false
+            end
+        end
+
+        true
+    end
+
+    def self.generate(base_dir='.', build_dir='./build')
+        FileUtils.mkdir_p(build_dir)
+
+        p = self.new(base_dir, build_dir)
+        p.check_subdirs(base_dir) || exit(1)
+
+        p.subdirs.each do |dir|
+            p.do_process_dir(dir)
+        end
+    end
+
+
+    def self.build(base_dir='.', build_dir='./build')
+        if ! File.directory?(build_dir)
+            puts "Error: build directory does not exist. Did you run generate first?"
+            exit 1
+        end
+
+        p = self.new(base_dir, build_dir)
+        p.check_subdirs(build_dir) || exit(1)
+
+        p.subdirs.each do |dir|
+            if ! p.do_build_dir(dir)
+                puts "Error: failed to build #{dir}"
+                exit 1
+            end
+        end
     end
 end
 
-Processor::main(subdirs: ARGV)
+task = ARGV[0]
+
+if task == 'generate'
+    Processor.generate(*ARGV[1..-1])
+elsif task == 'build'
+    Processor.build(*ARGV[1..-1])
+end

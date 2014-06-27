@@ -6,5 +6,5 @@ serverSettings:
   databaseSettings:
     databaseType: POSTGRESQL
     jdbcUrl: "jdbc:postgresql://localhost:5432/kalibro"
-    username: "kalibro"
-    password: "kalibro"
+    username: <%= misc.yaml_string(c['kalibro.db.username']) %>
+    password: <%= misc.yaml_string(c['kalibro.db.password']) %>

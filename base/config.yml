@@ -1,2 +1,2 @@
-files:
-    - Dockerfile.erb
+ports:
+    - 22

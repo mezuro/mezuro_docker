@@ -1,8 +1,9 @@
-<%= Git::import_or_clone(c['ruby.mezuro_app_path'],
+<%= git.import_or_clone(c['mezuro.install_path'],
                          'https://github.com/mezuro/mezuro.git') %>
 
-RUN bash -l -c 'cd <%= c['ruby.mezuro_app_path'] %> && rvm install ./.ruby-version'
-RUN bash -l -c 'cd <%= c['ruby.mezuro_app_path'] %> && gem install bundler && bundle install -j4'
+RUN bash -l -c 'cd <%= c['mezuro.install_path'] %> && rvm install ./.ruby-version'
+RUN bash -l -c 'cd <%= c['mezuro.install_path'] %> && gem install bundler && bundle install -j4'
 
-ADD mezuro_setup.sh <%= c['ruby.mezuro_app_path'] %>/setup.sh
-ADD mezuro_start.sh <%= c['ruby.mezuro_app_path'] %>/start.sh
+<%= docker.copy_tmpl('mezuro_setup.sh.erb', File.join(c['mezuro.install_path'], 'setup.sh')) %>
+
+<%= docker.copy_tmpl('mezuro_start.sh.erb', File.join(c['mezuro.install_path'], 'start.sh')) %>

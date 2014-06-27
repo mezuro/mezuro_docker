@@ -1,9 +1,9 @@
 #!/bin/bash
 
-GATEKEEPER_PATH='<%= c['ruby.gatekeeper_app_path'] %>'
+GATEKEEPER_PATH='<%= c['gatekeeper.install_path'] %>'
 GATEKEEPER_START="$GATEKEEPER_PATH/start.sh"
 
-MEZURO_PATH='<%= c['ruby.mezuro_app_path'] %>'
+MEZURO_PATH='<%= c['mezuro.install_path'] %>'
 MEZURO_PIDFILE="$MEZURO_PATH/mezuro.pid"
 
 if [ -e "$MEZURO_PIDFILE" ]; then

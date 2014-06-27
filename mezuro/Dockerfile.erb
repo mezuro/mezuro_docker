@@ -1,28 +1,22 @@
-FROM <%= c['docker.repository'] %>/base
+FROM <%= c['docker.repository'] %>/kalibro
 
 MAINTAINER <%= c['docker.maintainer'] %>
 
-<%= Apt::update %>
-<%= Apt::install('curl libpq-dev', recommends: false, suggests: false) %>
-
-RUN curl -L https://get.rvm.io | bash
-RUN bash -l -c "rvm requirements"
-RUN echo "gem: --no-document" > /root/.gemrc
-
-<% if c['features'].include?('kalibro') %> 
-<%= import["Dockerfile-kalibro.erb"] %>
-<% end %>
-
-<% if c['features'].include?('gatekeeper') %> 
-<%= import["Dockerfile-gatekeeper.erb"] %>
-<% end %>
-
-<% if c['features'].include?('mezuro') %> 
-<%= import["Dockerfile-mezuro.erb"] %>
-<% end %>
-
-<% if c['features'].include?('phantomjs') %> 
+<% if c['phantomjs.install'] %>
 <%= import["Dockerfile-phantomjs.erb"] %>
 <% end %>
 
-<%= import["../base/Dockerfile-ports.erb"] %>
+<%= apt.update %>
+<%= apt.install('curl libpq-dev', recommends: false, suggests: false) %>
+
+RUN curl -L https://get.rvm.io | bash
+RUN bash -l -c 'rvm requirements'
+RUN echo 'gem: --no-document' > /root/.gemrc
+ 
+<%= import["Dockerfile-gatekeeper.erb"] %>
+
+<% if c['mezuro.install'] %>
+<%= import["Dockerfile-mezuro.erb"] %>
+<% end %>
+
+<%= docker.ports %>

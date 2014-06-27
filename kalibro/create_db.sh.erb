@@ -2,8 +2,8 @@
 
 if ! psql -lqt | cut -d '|' -f 1 | grep -q kalibro; then
 	psql --set ON_ERROR_STOP=1 <<'EOF'
-CREATE ROLE kalibro
-  LOGIN ENCRYPTED PASSWORD 'kalibro'
+CREATE ROLE "<%= c['kalibro.db.username'] %>"
+  LOGIN ENCRYPTED PASSWORD $pw$<%= c['kalibro.db.password'] %>$pw$
   VALID UNTIL 'infinity';
 CREATE DATABASE kalibro
   WITH ENCODING='UTF8'
