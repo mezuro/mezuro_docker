@@ -8,7 +8,7 @@ apt:
     use_proxy: false
     proxy_url: http://apt-cacher-ng:3142
 build:
-    options: --rm=true --force-rm=true
+    options: --rm=true
 subdirs:
     - base
     - kalibro
