@@ -127,7 +127,7 @@ class Processor
 
     attr_reader :base_dir, :build_dir, :config
 
-    def initialize(base_dir, build_dir)
+    def initialize(base_dir='.', build_dir='./build')
         @base_dir = base_dir
         @build_dir = build_dir
 
@@ -271,42 +271,49 @@ class Processor
         true
     end
 
-    def self.generate(base_dir='.', build_dir='./build')
-        FileUtils.mkdir_p(build_dir)
+    def generate
+        FileUtils.mkdir_p(@build_dir)
 
-        p = self.new(base_dir, build_dir)
-        p.check_subdirs(base_dir) || exit(1)
-
-        p.subdirs.each do |dir|
-            p.do_process_dir(dir)
+        if ! check_subdirs(@base_dir)
+            return false
         end
+
+        subdirs.each do |dir|
+            do_process_dir(dir)
+        end
+
+        true
     end
 
 
-    def self.build(base_dir='.', build_dir='./build')
+    def build
         if ! File.directory?(build_dir)
             puts "Error: build directory does not exist. Did you run generate first?"
-            exit 1
+            return false
         end
 
-        p = self.new(base_dir, build_dir)
-        p.check_subdirs(build_dir) || exit(1)
+        if ! check_subdirs(build_dir)
+            return false
+        end
 
-        p.subdirs.each do |dir|
-            if ! p.do_build_dir(dir)
+        subdirs.each do |dir|
+            if ! do_build_dir(dir)
                 puts "Error: failed to build #{dir}"
-                exit 1
+                return false
             end
         end
+
+        true
     end
 end
 
 if __FILE__ == $0
     task = ARGV[0]
+    p = Processor.new(*ARGV[1..-1])
 
     if task == 'generate'
-        Processor.generate(*ARGV[1..-1])
+        p.generate
     elsif task == 'build'
-        Processor.build(*ARGV[1..-1])
+        p.build
     end
 end
