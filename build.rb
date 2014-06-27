@@ -179,9 +179,8 @@ class Processor
 
         stat = File.stat(path)
         File.chmod(stat.mode, result_path)
-        File.utime(stat.atime, stat.mtime, result_path)
-
         File.write(result_path, render_template(fname, config))
+        File.utime(stat.atime, stat.mtime, result_path)
     end
 
     def ignored?(f)
