@@ -26,7 +26,7 @@ RUN mkdir -p /usr/share/tomcat6/.kalibro/projects/ \
 <%= docker.copy_tmpl('kalibro_test.settings.erb', '/usr/share/tomcat6/.kalibro/kalibro_test.settings') %>
 
 RUN chown -R :tomcat6 /usr/share/tomcat6/.kalibro \
- && chmod -R 'a=rX,ug+w' /usr/share/tomcat6/.kalibro \
+ && chmod -R 'a=rX,ug+w' /usr/share/tomcat6/.kalibro
 
 RUN mkdir -p /var/tmp/KalibroService
 
