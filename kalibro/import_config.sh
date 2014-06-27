@@ -1,4 +1,6 @@
 #!/bin/sh
 
-java -classpath "/var/lib/tomcat6/webapps/KalibroService/WEB-INF/lib" \
- org.kalibro.ImportConfiguration "$1"
+set -x
+
+cd /var/lib/tomcat6/webapps/KalibroService/WEB-INF/lib
+java -classpath '*' org.kalibro.ImportConfiguration "$1"
