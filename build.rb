@@ -80,7 +80,7 @@ class DockerUtil < CommandBase
         processor.write_template(File.join(File.dirname(current_template), fname),
                                  config)
         fname = fname.chomp('.erb')
-        "COPY #{fname} #{dest}"
+        "ADD #{fname} #{dest}"
     end
 end
 
