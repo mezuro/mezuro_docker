@@ -1,9 +1,9 @@
 #!/bin/bash
 
-GATEKEEPER_PATH='<%= c['gatekeeper.install_path'] %>'
-GATEKEEPER_START="$GATEKEEPER_PATH/start.sh"
+GATEKEEPER_PATH=/home/mezuro/kalibro_gatekeeper
+GATEKEEPER_START=/home/mezuro/gatekeeper_start.sh
 
-MEZURO_PATH='<%= c['mezuro.install_path'] %>'
+MEZURO_PATH=/home/mezuro/mezuro
 MEZURO_PIDFILE="$MEZURO_PATH/mezuro.pid"
 
 if [ -e "$MEZURO_PIDFILE" ]; then
@@ -19,5 +19,6 @@ if [ -x "$GATEKEEPER_START" ]; then
 	fi
 end
 
-cd "$MEZURO_PATH" && \
-  bundle exec rails s -d -p 3000 --pid "$MEZURO_PIDFILE"
+cd "$MEZURO_PATH" \
+ && bundle install \
+ && bundle exec rails s -d -p 3000 --pid "$MEZURO_PIDFILE"

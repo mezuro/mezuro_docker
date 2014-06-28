@@ -1,11 +1,12 @@
 #!/bin/bash
 
-GATEKEEPER_PATH='<%= c['gatekeeper.install_path'] %>'
+GATEKEEPER_PATH=/home/mezuro/kalibro_gatekeeper
 
 copy_db_cfg()
 {
   [ -f config/database.yml ] || cp config/database.yml{.sample,}
 }
 
-cd "$GATEKEEPER_PATH" && \
-  copy_db_cfg
+cd "$GATEKEEPER_PATH" \
+ && copy_db_cfg \
+ && bundle install -j4 

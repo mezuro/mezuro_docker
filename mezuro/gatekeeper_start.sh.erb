@@ -1,6 +1,6 @@
 #!/bin/bash
 
-GATEKEEPER_PATH='<%= c['gatekeeper.install_path'] %>'
+GATEKEEPER_PATH=/home/mezuro/kalibro_gatekeeper
 GATEKEEPER_PIDFILE="$GATEKEEPER_PATH/gatekeeper.pid"
 
 set -e
@@ -13,5 +13,6 @@ end
 service start postgresql
 service start tomcat6
 
-cd "$GATEKEEPER_PATH" && \
-  bundle exec rails s -d -p 8081 --pid "$PIDFILE"
+cd "$GATEKEEPER_PATH" \
+ && bundle install -j4 \
+ && bundle exec rails s -d -p 8081 --pid "$PIDFILE"

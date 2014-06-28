@@ -12,6 +12,8 @@ MAINTAINER <%= c['docker.maintainer'] %>
 RUN curl -L https://get.rvm.io | bash
 RUN bash -l -c 'rvm requirements'
 RUN echo 'gem: --no-document' > /root/.gemrc
+
+RUN useradd '<%= c['mezuro.user'] %>' --groups rvm --create-home
  
 <%= import["Dockerfile-gatekeeper.erb"] %>
 

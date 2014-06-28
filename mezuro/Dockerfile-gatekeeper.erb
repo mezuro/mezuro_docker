@@ -1,12 +1,9 @@
-<%= git.import_or_clone(c['gatekeeper.install_path'], 
-                         'https://github.com/mezuro/kalibro_gatekeeper.git',
-                         '2f9417') %>
-
-RUN bash -l -c 'cd <%= c['gatekeeper.install_path'] %> && rvm install ./.ruby-version'
-RUN bash -l -c 'cd <%= c['gatekeeper.install_path'] %> && gem install bundler && bundle install -j4'
+ADD gatekeeper_checkout.sh /home/mezuro/
+RUN sudo -u mezuro -- /home/mezuro/gatekeeper_checkout.sh
+RUN sudo -u mezuro -- sh -c 'cd /home/mezuro/kalibro_gatekeeper; rvm install $(cat .ruby-version)'
+RUN sudo -u mezuro -- sh -c 'cd /home/mezuro/kalibro_gatekeeper; gem install bundler && bundle install -j4'
 
 <%= docker.copy_tmpl('gatekeeper_setup.sh.erb',
-                    File.join(c['gatekeeper.install_path'], 'setup.sh')) %>
-
+                     '/home/mezuro/gatekeeper_setup.sh') %>
 <%= docker.copy_tmpl('gatekeeper_start.sh.erb',
-                    File.join(c['gatekeeper.install_path'], 'start.sh')) %>
+                     '/home/mezuro/gatekeeper_start.sh') %>

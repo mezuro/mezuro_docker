@@ -1,8 +1,7 @@
-gatekeeper:
-    install_path: /home/mezuro/kalibro_gatekeeper
 mezuro:
     install: true
-    install_path: /home/mezuro/mezuro
+gatekeeper:
+    install: true
 phantomjs:
     install: true
     download_path: https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-x86_64.tar.bz2
@@ -16,5 +15,4 @@ files:
     - mezuro_setup.sh.erb
     - gatekeeper_setup.sh.erb
     - gatekeeper_start.sh.erb
-
 
