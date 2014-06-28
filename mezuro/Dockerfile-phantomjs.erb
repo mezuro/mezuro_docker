@@ -1,6 +1,7 @@
-RUN wget '<%= c['phantomjs.download_path'] %>' -O /var/tmp/phantomjs.tar.bz2
+ADD <%= c['phantomjs.download_path'] %> /var/tmp/phantomjs.tar.bz2
 
 RUN mkdir -p '<%= c['phantomjs.install_path'] %>' \
- && chmod 755 '<%= c['phantomjs.install_path'] %>'
-RUN tar xf /root/phantomjs.tar.bz2 -C '<%= c['phantomjs.install_path'] %>'
+ && chmod 775 '<%= c['phantomjs.install_path'] %>'
+RUN tar xf /var/tmp/phantomjs.tar.bz2 -C '<%= c['phantomjs.install_path'] %>' \
+ --no-same-owner
 RUN ln -s '<%= c['phantomjs.install_path'] %>/bin/phantomjs' /usr/local/bin/phantomjs
