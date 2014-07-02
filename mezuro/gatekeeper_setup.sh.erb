@@ -1,6 +1,7 @@
 #!/bin/bash
 
-GATEKEEPER_PATH=/home/mezuro/kalibro_gatekeeper
+GATEKEEPER_PATH="$HOME/kalibro_gatekeeper"
+[ -n "$1" ] && GATEKEEPER_PATH="$1"
 
 copy_db_cfg()
 {
@@ -9,4 +10,4 @@ copy_db_cfg()
 
 cd "$GATEKEEPER_PATH" \
  && copy_db_cfg \
- && bundle install -j4 
+ && rvm-exec bundle install -j4 

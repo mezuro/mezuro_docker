@@ -1,5 +1,13 @@
 #!/bin/bash
 
+MEZURO_PATH="$HOME/mezuro"
+[ -n "$1" ] && MEZURO_PATH="$1"
+
+GATEKEEPER_PATH="$HOME/kalibro_gatekeeper"
+[ -n "$2" ] && GATEKEEPER_PATH="$2"
+
+GATEKEEPER_START="$GATEKEEPER_PATH/gatekeeper_setup.sh"
+
 GATEKEEPER_PATH=/home/mezuro/kalibro_gatekeeper
 GATEKEEPER_START=/home/mezuro/gatekeeper_start.sh
 

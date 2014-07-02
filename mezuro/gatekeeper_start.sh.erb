@@ -1,6 +1,10 @@
 #!/bin/bash
 
-GATEKEEPER_PATH=/home/mezuro/kalibro_gatekeeper
+SCRIPT_PATH=$(dirname "${BASH_SOURCE[0]}")
+
+GATEKEEPER_PATH="$HOME/kalibro_gatekeeper"
+[ -n "$1" ] && GATEKEEPER_PATH="$1"
+
 GATEKEEPER_PIDFILE="$GATEKEEPER_PATH/gatekeeper.pid"
 
 set -e
@@ -10,9 +14,10 @@ if [ -e "$PIDFILE" ]; then
 	exit 2
 end
 
+"$SCRIPT_PATH/gatekeeper_setup.sh"
+
 service start postgresql
 service start tomcat6
 
 cd "$GATEKEEPER_PATH" \
- && bundle install -j4 \
- && bundle exec rails s -d -p 8081 --pid "$PIDFILE"
+ && rvm-exec bundle exec rails s -d -p 8081 --pid "$PIDFILE"

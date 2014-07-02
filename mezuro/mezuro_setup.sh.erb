@@ -1,9 +1,12 @@
 #!/bin/bash
 
-GATEKEEPER_PATH=/home/mezuro/kalibro_gatekeeper
-GATEKEEPER_SETUP=/home/mezuro/gatekeeper_setup.sh"
+SCRIPT_PATH=$(dirname "${BASH_SOURCE[0]}")
+
+GATEKEEPER_PATH="$HOME/kalibro_gatekeeper"
+[ -n "$2" ] && GATEKEEPER_PATH="$2"
 
 MEZURO_PATH=/home/mezuro/mezuro
+[ -n "$1" ] && MEZURO_PATH="$1"
 
 set -e
 
@@ -17,10 +20,11 @@ copy_tests_cfg()
   [ -f features/support/kalibro_cucumber_helpers.yml ] || cp features/support/kalibro_cucumber_helpers.yml{.sample,}
 }
 
+GATEKEEPER_SETUP="$SCRIPT_PATH/gatekeeper_setup.sh"
 [ -x "$GATEKEEPER_SETUP"] && "$GATEKEEPER_SETUP"
 
 cd "$MEZURO_PATH" \
  && copy_db_cfg \
  && copy_tests_cfg \
- && bundle install -j4 \
- && bundle exec rake db:setup
+ && rvm-exec bundle install -j4 \
+ && rvm-exec bundle exec rake db:setup
