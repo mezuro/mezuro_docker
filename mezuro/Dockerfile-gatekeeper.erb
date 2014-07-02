@@ -7,12 +7,12 @@ RUN mkdir -p /var/tmp/mezuro/gatekeeper
 
 RUN install -g mezuro -o mezuro -t /home/mezuro /var/tmp/mezuro/gatekeeper/*
 
-RUN sudo -u mezuro -- sh -c '\
+RUN su -l mezuro -c '\
  git clone "https://github.com/mezuro/kalibro_gatekeeper.git" ~/kalibro_gatekeeper; \
  cd ~/kalibro_gatekeeper && git checkout af7c76526b'
 
-RUN sudo -u mezuro -- sh -c '\
+RUN su -l mezuro -c '\
  cd ~/kalibro_gatekeeper && rvm install $(cat .ruby-version)'
 
-RUN sudo -u mezuro -- sh -c '\
+RUN su -l mezuro -c '\
  cd ~/kalibro_gatekeeper && gem install bundler && bundle install -j4'

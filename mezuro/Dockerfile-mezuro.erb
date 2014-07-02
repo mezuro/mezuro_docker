@@ -7,12 +7,12 @@ RUN mkdir -p /var/tmp/mezuro/mezuro
 
 RUN install -g mezuro -o mezuro -t /home/mezuro /var/tmp/mezuro/mezuro/*
 
-RUN sudo -u mezuro -- sh -c '\
+RUN su -l mezuro -c '\
  git clone "https://github.com/mezuro/mezuro.git" ~/mezuro; \
  cd ~/mezuro && git checkout 907442b6e8'
 
-RUN sudo -u mezuro -- sh -c '\
+RUN su -l mezuro -c '\
  cd ~/mezuro && rvm install $(cat .ruby-version)'
 
-RUN sudo -u mezuro -- sh -c '\
+RUN su -l mezuro -c '\
  cd ~/mezuro && gem install bundler && bundle install -j4'
