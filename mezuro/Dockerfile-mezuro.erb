@@ -1,9 +1,19 @@
-ADD mezuro_checkout.sh /home/mezuro/
-RUN sudo -u mezuro -- /home/mezuro/mezuro_checkout.sh
-RUN sudo -u mezuro -- sh -c 'cd /home/mezuro/mezuro; rvm install $(cat .ruby-version)'
-RUN sudo -u mezuro -- sh -c 'cd /home/mezuro/mezuro; gem install bundler && bundle install -j4'
+RUN mkdir -p /var/tmp/mezuro/mezuro
 
+ADD mezuro_checkout.sh /var/tmp/mezuro/mezuro
 <%= docker.copy_tmpl('mezuro_setup.sh.erb',
-                     '/home/mezuro/mezuro_setup.sh') %>
+                     '/var/tmp/mezuro/mezuro/mezuro_setup.sh') %>
 <%= docker.copy_tmpl('mezuro_start.sh.erb',
-                     '/home/mezuro/mezuro_start.sh') %>
+                     '/var/tmp/mezuro/mezuro/mezuro_start.sh') %>
+
+RUN install -g mezuro -o mezuro -t /home/mezuro /var/tmp/mezuro/mezuro/*
+
+RUN sudo -u mezuro -- sh -c '\
+ git clone "https://github.com/mezuro/mezuro.git" ~/mezuro; \
+ cd ~/mezuro && git checkout 907442b6e8'
+
+RUN sudo -u mezuro -- sh -c '\
+ cd ~/mezuro && rvm install $(cat .ruby-version)'
+
+RUN sudo -u mezuro -- sh -c '\
+ cd ~/mezuro && gem install bundler && bundle install -j4'

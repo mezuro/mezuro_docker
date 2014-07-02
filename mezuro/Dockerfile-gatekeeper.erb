@@ -1,9 +1,19 @@
-ADD gatekeeper_checkout.sh /home/mezuro/
-RUN sudo -u mezuro -- /home/mezuro/gatekeeper_checkout.sh
-RUN sudo -u mezuro -- sh -c 'cd /home/mezuro/kalibro_gatekeeper; rvm install $(cat .ruby-version)'
-RUN sudo -u mezuro -- sh -c 'cd /home/mezuro/kalibro_gatekeeper; gem install bundler && bundle install -j4'
+RUN mkdir -p /var/tmp/mezuro/gatekeeper
 
+ADD gatekeeper_checkout.sh /var/tmp/mezuro/gatekeeper
 <%= docker.copy_tmpl('gatekeeper_setup.sh.erb',
-                     '/home/mezuro/gatekeeper_setup.sh') %>
+                     '/var/tmp/mezuro/gatekeeper/gatekeeper_setup.sh') %>
 <%= docker.copy_tmpl('gatekeeper_start.sh.erb',
-                     '/home/mezuro/gatekeeper_start.sh') %>
+                     '/var/tmp/mezuro/gatekeeper/gatekeeper_start.sh') %>
+
+RUN install -g mezuro -o mezuro -t /home/mezuro /var/tmp/mezuro/gatekeeper/*
+
+RUN sudo -u mezuro -- sh -c '\
+ git clone "https://github.com/mezuro/kalibro_gatekeeper.git" ~/kalibro_gatekeeper; \
+ cd ~/kalibro_gatekeeper && git checkout af7c76526b'
+
+RUN sudo -u mezuro -- sh -c '\
+ cd ~/kalibro_gatekeeper && rvm install $(cat .ruby-version)'
+
+RUN sudo -u mezuro -- sh -c '\
+ cd ~/kalibro_gatekeeper && gem install bundler && bundle install -j4'

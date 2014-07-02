@@ -9,10 +9,3 @@ phantomjs:
 ports:
     - 8081
     - 3000
-files:
-    - Dockerfile.erb
-    - mezuro_start.sh.erb
-    - mezuro_setup.sh.erb
-    - gatekeeper_setup.sh.erb
-    - gatekeeper_start.sh.erb
-
