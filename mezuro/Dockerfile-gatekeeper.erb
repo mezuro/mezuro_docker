@@ -1,6 +1,5 @@
 RUN mkdir -p /var/tmp/mezuro/gatekeeper
 
-ADD gatekeeper_checkout.sh /var/tmp/mezuro/gatekeeper
 <%= docker.copy_tmpl('gatekeeper_setup.sh.erb',
                      '/var/tmp/mezuro/gatekeeper/gatekeeper_setup.sh') %>
 <%= docker.copy_tmpl('gatekeeper_start.sh.erb',

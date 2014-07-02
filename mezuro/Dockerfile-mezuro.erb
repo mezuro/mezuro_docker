@@ -1,6 +1,5 @@
 RUN mkdir -p /var/tmp/mezuro/mezuro
 
-ADD mezuro_checkout.sh /var/tmp/mezuro/mezuro
 <%= docker.copy_tmpl('mezuro_setup.sh.erb',
                      '/var/tmp/mezuro/mezuro/mezuro_setup.sh') %>
 <%= docker.copy_tmpl('mezuro_start.sh.erb',
